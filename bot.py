@@ -4,7 +4,7 @@ from exeptions import *
 # from rich.console import Console
 from rich.table import Table
 from rich import box
-from user_output import HelpView
+from user_output import ConsoleUserOutput, HelpView
 import subprocess
 import re, os, pickle
 
@@ -299,10 +299,22 @@ def sort_files(path):
     except Exception as e:
         return str(e) 
 
+
 @input_error
-def help_command(*commands) -> str:
-    help_view = HelpView(commands)
-    return help_view.render()
+def help_command() -> str:
+    console_output = ConsoleUserOutput()
+    help_view = HelpView(console_output)
+
+    help_text = ">>> space is the reserved argument separator character <<<"
+    command_list = [
+        ("hello", "Greetings and introduction 🚀"),
+        ("add /name/phone/birthday/email/address", "Add a new contact with details ✅")
+    ]
+
+    help_view.show_help(help_text)
+    help_view.show_command_list(command_list)
+
+    return ""
   
     
 # команди роботи з нотатками

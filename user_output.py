@@ -6,59 +6,56 @@ from rich import box
 class UserOutput(ABC):
     
     @abstractmethod
-    def render(self):
+    def print_message(self, message: str):
+        pass
+    
+    @abstractmethod
+    def print_table(self):
         pass
 
+class ConsoleUserOutput(UserOutput):
+    def __init__(self):
+        self.console = Console()
 
-class ContactsView(UserOutput):
-    def __init__(self, contacts):
-        self.contacts = contacts
-    
-    def render(self):
-        # Виведення карток з контактами користувача
-        pass
+    def print_message(self, message: str):
+        self.console.print(message)
 
+    def print_table(self, table):
+        self.console.print(table)
+        
 
-class NotesView(UserOutput):
-    def __init__(self, notes):
-        self.notes = notes
-    
-    def render(self):
-        # Виведення списку нотаток користувача
-        pass
-
-
-class HelpView(UserOutput):
-    def __init__(self, commands):
-        self.commands = commands
-    
-    def render(self): # Виведення сторінки з інформацією про доступні команди
-        console = Console()
-        table = Table(title=">>> space is the reserved argument separator character <<<", show_header=True, header_style="bold", box=box.ROUNDED)
+class HelpView:
+    def __init__(self, user_output: UserOutput):
+        self.user_output = user_output
+        
+    def show_help(self, help_text):
+        self.user_output.print_message(help_text)
+        
+    def show_command_list(self, command_list):
+        table = Table(title="COMMAND HELP", style="red", show_header=True, header_style="bold", box=box.ROUNDED)
         table.add_column("Command", style="cyan")
         table.add_column("Description", style="green")
         
-        table.add_row("hello", "Greetings and introduction 🚀")
-        table.add_row("add [name] [phone] [birthday] [email] [address]", "Add a new contact with details ✅")
-        table.add_row("change [name] [phone]", "Change phone number for a contact ✅")
-        table.add_row("del [name]", "Deleting contact by name ❌")
-        table.add_row("find [name]", "Find contact by name")
-        table.add_row("show", "Shows you all contacts in addressbook 📖")
-        table.add_row("birthday [name] [date in format dd-mm-yyyy]", "Setting birthday date by name")
-        table.add_row("bday [name] [new_birthday]", "Changing birthday date by name")
-        table.add_row("period [number of days]", "Shows you a birthdays in a period")
-        table.add_row("show-notes", "Shows you a list of notes 📖")
-        table.add_row("add-notes [name] [text] [tag]", "Adding notes ✅")
-        table.add_row("add-tag [note number] [tag]", "Adding a tag for a note ✅")
-        table.add_row("change-tag [note number] [tag]", "Changing a tag in a note")
-        table.add_row("add-text [note number] [text]", "Adding a text to a note ✅")
-        table.add_row("change-text [note number] [text]", "Changing a text to a note")
-        table.add_row("delete-note [note number]", "Deleting a note ❌")
-        table.add_row("add-text [note number] [text]", "Adding a text to a note")
-        table.add_row("search-n [note number] [text]", "Searching a text in note")
-        table.add_row("bye, end, exit", "Exit from the bot-helper")
-        table.add_row("help", "shows you this table 💡")
+        for cmd, desc in command_list:
+            table.add_row(cmd, desc)
         
-        
-        console.print(table)
-        return ""
+        self.user_output.print_table(table)
+    
+
+
+# class ContactsView(UserOutput):
+#     def __init__(self, contacts):
+#         self.contacts = contacts
+    
+#     def render(self):
+#         # Виведення карток з контактами користувача
+#         pass
+
+
+# class NotesView(UserOutput):
+#     def __init__(self, notes):
+#         self.notes = notes
+    
+#     def render(self):
+#         # Виведення списку нотаток користувача
+#         pass
